@@ -1,0 +1,50 @@
+# --- Create link (junction) between default save location (C:\Users\Bryan\AppData\LocalLow\IronGate) and the Save folder in this directory ---
+
+$SaveFolder = Join-Path (Get-Item .).FullName 'Saves'
+$ValheimSave = Join-Path $env:userprofile 'appdata\locallow\IronGate\Valheim'
+
+Write-Host "Valheim default save location: $ValheimSave"
+Write-Host "SaveFolder: $SaveFolder"
+
+. ".\Read_YesNoChoice.ps1" # Load external script with Read-YesNoChoice function
+$choice = Read-YesNoChoice -Title "Is this information correct?" -Message "Yes or No?" -DefaultOption 1
+
+# Act based on the choice
+switch ($choice) {
+    0 { 
+        Write-Host "You answered No. Exiting..."
+        exit 1
+    }
+    1 { 
+        Write-Host "You answered Yes. Continuing..."
+        # Continue script...
+    }
+}
+
+
+# --- Remove existing save link or folder ---
+if (Test-Path $ValheimSave) {
+    Write-Host "Removing existing Valheim save folder/link..."
+    Remove-Item $ValheimSave -Recurse -Force
+}
+
+# --- Create new junction ---
+Write-Host "Creating junction..."
+cmd /c mklink /J "`"$ValheimSave`"" "`"$SaveFolder`""
+
+if (-not (Test-Path $ValheimSave)) {
+    Write-Host "[ERROR] Failed to create junction."
+    exit 1
+}
+
+# --- Launch Valheim ---
+$ExePath = Join-Path (Get-Item .).FullName 'valheim.exe'
+if (-not (Test-Path $ExePath)) {
+    Write-Host "[ERROR] valheim.exe not found at $ExePath"
+    exit 1
+}
+
+Write-Host "`nLaunching Valheim..."
+Start-Process -FilePath $ExePath
+
+Write-Host "Done! You can close this window."
