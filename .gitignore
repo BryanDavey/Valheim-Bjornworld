@@ -8,3 +8,6 @@ steam_appid.txt
 UnityCrashHandler64.exe
 UnityPlayer.dll
 Valheim.exe
+# Ignore runtime BepInEx files
+BepInEx/cache/
+BepInEx/LogOutput.Log
