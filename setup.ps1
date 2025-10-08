@@ -13,6 +13,10 @@ $ValheimSave = Join-Path $env:userprofile 'appdata\locallow\IronGate\Valheim'
 Write-Host "ModdedValheim folder:   $ModdedValheimDir"
 Write-Host "Valheim saves folder: $ValheimSave"
 
+$SaveFolder = Join-Path $ModdedValheimDir 'Saves'
+Write-Host "The contents of:`n  $ValheimSave `nwill now be copied to:`n  $SaveFolder"
+
+
 . ".\Read_YesNoChoice.ps1" # Load external script with Read-YesNoChoice function
 $choice = Read-YesNoChoice -Title "Is this information correct?" -Message "Yes or No?" -DefaultOption 1
 
@@ -29,9 +33,6 @@ switch ($choice) {
 }
 
 # --- Copy world and character saves to this modded valheim installation ---
-
-$SaveFolder = Join-Path $ModdedValheimDir 'Saves'
-Write-Host "The contents of:`n  $ValheimSave `nwill now be copied to:`n  $SaveFolder"
 
 # Ensure the source and destination exist
 if (-Not (Test-Path $ValheimSave)) {
