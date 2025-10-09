@@ -1,13 +1,41 @@
+# --- Add git template remote and pull latest changes ---
+Write-Host "Checking for any changes on remote Git repository and template..."
+# Ensure template remote exists
+if (-not (git remote | Select-String -Quiet "^template$")) {
+    git remote add template git@github.com:BryanDavey/Valheim-Modded.git
+}
+# Fetch latest from all remotes
+git fetch --all | Out-Null
+git merge template/main --allow-unrelated-histories -m "Merge updates from template repo"
+
+# Perform merge and capture output
+$mergeOutput = git merge template/main --allow-unrelated-histories -m "Merge updates from template repo" 2>&1
+
+Write-Host $mergeOutput
+Write-Host "`nGit update done."
+
+# Check if merge actually changed anything
+if ($mergeOutput -notmatch "Already up to date" -and $mergeOutput -notmatch "Fast-forward") {
+    Write-Host "Changes were merged. Re-running this script..."
+    # Restart this script
+    & $PSCommandPath
+    exit
+} else {
+    Write-Host "No new Git changes found. Continuing...`n`n"
+}
+
 # --- Create link (junction) between default save location (C:\Users\Bryan\AppData\LocalLow\IronGate) and the Save folder in this directory ---
 
 $SaveFolder = Join-Path (Get-Item .).FullName 'Saves'
 $ValheimSave = Join-Path $env:userprofile 'appdata\locallow\IronGate\Valheim'
 
 Write-Host "Valheim default save location: $ValheimSave"
-Write-Host "SaveFolder: $SaveFolder"
+Write-Host "SaveFolder:                    $SaveFolder"
 
+Write-Host "`nThis script will create a junction (shortcut) between where Valheim is looking for save data and where the save data is in this custom Valheim installation.`n"
+Write-Host "This operation will not copy any data, just create a shortcut such that:`n    $ValheimSave`nwill redirect to:`n    $SaveFolder"
 . ".\Read_YesNoChoice.ps1" # Load external script with Read-YesNoChoice function
-$choice = Read-YesNoChoice -Title "Is this information correct?" -Message "Yes or No?" -DefaultOption 1
+$choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
 
 # Act based on the choice
 switch ($choice) {
@@ -36,11 +64,6 @@ if (-not (Test-Path $ValheimSave)) {
     Write-Host "[ERROR] Failed to create junction."
     exit 1
 }
-
-# --- Add git template remote and pull latest changes ---
-git remote add template git@github.com:BryanDavey/Valheim-Modded.git
-git fetch --all
-git merge template/main --allow-unrelated-histories -m "Merge updates from template repo"
 
 # --- Launch Valheim ---
 $ExePath = Join-Path (Get-Item .).FullName 'valheim.exe'

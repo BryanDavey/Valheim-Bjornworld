@@ -3,22 +3,23 @@ $ErrorActionPreference = 'Stop'
 Write-Host "=== ModdedValheim Launcher ===`n"
 
 # Path where this script is located (Valheim-Modded folder)
-# $ModdedValheimDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $ModdedValheimDir = (Get-Item .).FullName
 
 # Paths
-# $ValheimSave = Join-Path $env:LOCALAPPDATA 'Low\IronGate\Valheim'
+# Path to where Valheim.exe will look for world and character save data
 $ValheimSave = Join-Path $env:userprofile 'appdata\locallow\IronGate\Valheim'
 
 Write-Host "ModdedValheim folder:   $ModdedValheimDir"
 Write-Host "Valheim saves folder: $ValheimSave"
 
 $SaveFolder = Join-Path $ModdedValheimDir 'Saves'
-Write-Host "The contents of:`n  $ValheimSave `nwill now be copied to:`n  $SaveFolder"
+Write-Host "This operation will copy any existing world and character saves into this Valhiem installation."
+Write-Host "Please navigate to $ValhiemSave in your file explorer and ensure you want to copy those saves into this Valheim installation."
+Write-Host "After this operation, the contents of:`n  $ValheimSave `nwill be copied to:`n  $SaveFolder"
 
 
 . ".\Read_YesNoChoice.ps1" # Load external script with Read-YesNoChoice function
-$choice = Read-YesNoChoice -Title "Is this information correct?" -Message "Yes or No?" -DefaultOption 1
+$choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
 
 # Act based on the choice
 switch ($choice) {
@@ -92,9 +93,9 @@ $ValheimDir = (Get-Content "$SteamPath\steamapps\libraryfolders.vdf" |
         }
     } | Where-Object { $_ -ne $null } | Select-Object -First 1
 
-Write-Host "`nValheim found at: $ValheimDir"
-Write-Host "Valheim game files will be copied from $ValheimDir to $ModdedValheimDir"
-$choice = Read-YesNoChoice -Title "Is this information correct?" -Message "Yes or No?" -DefaultOption 1
+Write-Host "Valheim game files will be copied from:`n   $ValheimDir to`n    $ModdedValheimDir"
+
+$choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
 
 # Act based on the choice
 switch ($choice) {
@@ -178,6 +179,23 @@ Write-Host "Copy completed from $ValheimDir to $ModdedValheimDir"
 # --- Copy existing mod cfg files (if they exist) ---
 $ExistingConfigPath = Join-Path $ValheimDir 'BepInEx\config'
 $NewConfigPath = Join-Path $ModdedValheimDir 'BepInEx\config'
+
+Write-Host "In the next operation, the script will find and copy any existing BepInEx config files from your Valheim installation."
+Write-Host "BepInEx config files will be copied from:`n   $ExistingConfigPath to`n    $NewConfigPath"
+$choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
+
+# Act based on the choice
+switch ($choice) {
+    0 { 
+        Write-Host "You answered No. Exiting..."
+        exit 1
+    }
+    1 { 
+        Write-Host "You answered Yes. Continuing..."
+        # Continue script...
+    }
+}
+
 if ((Test-Path $ExistingConfigPath)) {
     Write-Output "Existing mod settings found. Copying to new modded Valheim installation."
     # Move everything recursively, preserving existing items
