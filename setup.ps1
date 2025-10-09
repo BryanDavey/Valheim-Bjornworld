@@ -110,48 +110,85 @@ switch ($choice) {
 
 $ValheimDir = $ValheimDir.TrimEnd('\')
 
-# Move everything recursively, preserving existing items
-Get-ChildItem -Path $ValheimDir -Recurse -Force | ForEach-Object {
-    # Compute relative path to preserve folder structure
-    $relativePath = $_.FullName.Substring($ValheimDir.Length - 1).TrimStart('\')
-    $destination = Join-Path -Path $ModdedValheimDir -ChildPath $relativePath
+# Define allowed folders and files
+$WhitelistedFolders = @('D3D12', 'MonoBleedingEdge', 'Valheim_Data')
+$WhitelistedFiles = @('Valheim.exe', 'steam_appid.txt', 'UnityCrashHandler64.exe', 'UnityPlayer.dll')
 
-    # Move file or folder if it doesn't exist
-    if (-Not (Test-Path $destination)) {
-        Write-Output "Copying $($_.FullName) into $destination"
-        Copy-Item -Path $_.FullName -Destination $destination
-    } else {
-        Write-Output "Skipping existing item: $relativePath"
+# Move everything recursively, preserving existing items
+Get-ChildItem -Path $ValheimDir -Recurse -Force |
+    Where-Object {
+        $include = $false
+
+        # --- Folder whitelist check ---
+        foreach ($folder in $WhitelistedFolders) {
+            if ($_.FullName -like "*\$folder\*") {
+                $include = $true
+                break
+            }
+        }
+
+        # --- File whitelist check ---
+        if (-not $include -and -not $_.PSIsContainer) {
+            $filename = Split-Path -Path $_.FullName -Leaf
+            if ($WhitelistedFiles -contains $filename) {
+                $include = $true
+            }
+        }
+
+        # Output true or false to Where-Object
+        $include
+    } |
+    ForEach-Object {
+        # Compute relative path to preserve folder structure
+        $relativePath = $_.FullName.Substring($ValheimDir.Length - 1).TrimStart('\')
+        $destination = Join-Path -Path $ModdedValheimDir -ChildPath $relativePath
+
+        # Copy if not already existing
+        if (-Not (Test-Path $destination)) {
+            Write-Output "Copying $($_.FullName) into $destination"
+            Copy-Item -Path $_.FullName -Destination $destination
+        } else {
+            Write-Output "Skipping existing item: $relativePath"
+        }
     }
-}
+
+# # Move everything recursively, preserving existing items
+# Get-ChildItem -Path $ValheimDir -Recurse -Force | ForEach-Object {
+#     # Compute relative path to preserve folder structure
+#     $relativePath = $_.FullName.Substring($ValheimDir.Length - 1).TrimStart('\')
+#     $destination = Join-Path -Path $ModdedValheimDir -ChildPath $relativePath
+
+#     # Move file or folder if it doesn't exist
+#     if (-Not (Test-Path $destination)) {
+#         Write-Output "Copying $($_.FullName) into $destination"
+#         Copy-Item -Path $_.FullName -Destination $destination
+#     } else {
+#         Write-Output "Skipping existing item: $relativePath"
+#     }
+# }
 
 Write-Host "Copy completed from $ValheimDir to $ModdedValheimDir"
 
-# $WorldSave   = Join-Path $ModdedValheimDir 'Valheim - Modded'
 
-# # --- Remove existing save link or folder ---
-# if (Test-Path $ValheimSave) {
-#     Write-Host "Removing existing Valheim save folder/link..."
-#     Remove-Item $ValheimSave -Recurse -Force
-# }
+# --- Copy existing mod cfg files (if they exist) ---
+$ExistingConfigPath = Join-Path $ValheimDir 'BepInEx\config'
+$NewConfigPath = Join-Path $ModdedValheimDir 'BepInEx\config'
+if ((Test-Path $ExistingConfigPath)) {
+    Write-Output "Existing mod settings found. Copying to new modded Valheim installation."
+    # Move everything recursively, preserving existing items
+    Get-ChildItem -Path $ExistingConfigPath -Recurse -Force | ForEach-Object {
+        # Compute relative path to preserve folder structure
+        $relativePath = $_.FullName.Substring($ExistingConfigPath.Length - 1).TrimStart('\')
+        $destination = Join-Path -Path $NewConfigPath -ChildPath $relativePath
 
-# # --- Create new junction ---
-# Write-Host "Creating junction..."
-# cmd /c mklink /J "`"$ValheimSave`"" "`"$WorldSave`""
-
-# if (-not (Test-Path $ValheimSave)) {
-#     Write-Host "[ERROR] Failed to create junction."
-#     exit 1
-# }
-
-# # --- Launch Valheim ---
-# $ExePath = Join-Path $ValheimDir 'valheim.exe'
-# if (-not (Test-Path $ExePath)) {
-#     Write-Host "[ERROR] valheim.exe not found at $ExePath"
-#     exit 1
-# }
-
-# Write-Host "`nLaunching Valheim..."
-# Start-Process -FilePath $ExePath
-
-# Write-Host "Done! You can close this window."
+        # Move file or folder if it doesn't exist
+        if (-Not (Test-Path $destination)) {
+            Write-Output "Copying $($_.FullName) into $destination"
+            Copy-Item -Path $_.FullName -Destination $destination
+        } else {
+            Write-Output "Skipping existing item: $relativePath"
+        }
+    }
+} else {
+    Write-Output "Could not find existing BepInEx\config folder."
+}
