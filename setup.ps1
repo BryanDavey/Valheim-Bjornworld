@@ -3,11 +3,10 @@ $ErrorActionPreference = 'Stop'
 Write-Host "=== ModdedValheim Launcher ===`n"
 
 # Path where this script is located (Valheim-Modded folder)
-# $ModdedValheimDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $ModdedValheimDir = (Get-Item .).FullName
 
 # Paths
-# $ValheimSave = Join-Path $env:LOCALAPPDATA 'Low\IronGate\Valheim'
+# Path to where Valheim.exe will look for world and character save data
 $ValheimSave = Join-Path $env:userprofile 'appdata\locallow\IronGate\Valheim'
 
 Write-Host "ModdedValheim folder:   $ModdedValheimDir"
