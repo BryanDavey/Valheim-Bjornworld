@@ -10,7 +10,7 @@ $ModdedValheimDir = (Get-Item .).FullName
 $ValheimSave = Join-Path $env:userprofile 'appdata\locallow\IronGate\Valheim'
 
 $SaveFolder = Join-Path $ModdedValheimDir 'Saves'
-Write-Host "This operation will copy any existing world and character saves into this Valhiem installation."
+Write-Host "This operation will copy any existing world and character saves into this Valheim installation."
 Write-Host "Please navigate to $ValheimSave in your file explorer and ensure you want to copy those saves into this Valheim installation."
 Write-Host "After this operation, the contents of:`n  $ValheimSave `nwill be copied to:`n  $SaveFolder"
 
