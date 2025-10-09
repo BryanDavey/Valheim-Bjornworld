@@ -1,0 +1,13 @@
+# Ignore your saves folder
+Saves/
+# Ignore Valheim game files
+D3D12/
+MonoBleedingEdge/
+Valheim_Data/
+steam_appid.txt
+UnityCrashHandler64.exe
+UnityPlayer.dll
+Valheim.exe
+# Ignore runtime BepInEx files
+BepInEx/cache/
+BepInEx/LogOutput.Log
