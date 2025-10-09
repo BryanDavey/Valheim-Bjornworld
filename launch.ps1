@@ -1,3 +1,10 @@
+# --- Add git template remote and pull latest changes ---
+Write-Host "Checking for any changes on remote Git repository and template..."
+git remote add template git@github.com:BryanDavey/Valheim-Modded.git
+git fetch --all
+git merge template/main --allow-unrelated-histories -m "Merge updates from template repo"
+Write-Host "Git update done.`n`n"
+
 # --- Create link (junction) between default save location (C:\Users\Bryan\AppData\LocalLow\IronGate) and the Save folder in this directory ---
 
 $SaveFolder = Join-Path (Get-Item .).FullName 'Saves'
@@ -38,11 +45,6 @@ if (-not (Test-Path $ValheimSave)) {
     Write-Host "[ERROR] Failed to create junction."
     exit 1
 }
-
-# --- Add git template remote and pull latest changes ---
-git remote add template git@github.com:BryanDavey/Valheim-Modded.git
-git fetch --all
-git merge template/main --allow-unrelated-histories -m "Merge updates from template repo"
 
 # --- Launch Valheim ---
 $ExePath = Join-Path (Get-Item .).FullName 'valheim.exe'
