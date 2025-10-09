@@ -1,6 +1,6 @@
 # --- Configuration & Setup ---
 $ErrorActionPreference = 'Stop'
-Write-Host "=== ModdedValheim Launcher ===`n"
+Write-Host "=== ModdedValheim Setup Script ===`n"
 
 # Path where this script is located (Valheim-Modded folder)
 $ModdedValheimDir = (Get-Item .).FullName
