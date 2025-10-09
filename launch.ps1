@@ -12,7 +12,7 @@ git merge template/main --allow-unrelated-histories -m "Merge updates from templ
 $mergeOutput = git merge template/main --allow-unrelated-histories -m "Merge updates from template repo" 2>&1
 
 Write-Host $mergeOutput
-Write-Host "`nGit update done.`n`n"
+Write-Host "`nGit update done."
 
 # Check if merge actually changed anything
 if ($mergeOutput -notmatch "Already up to date" -and $mergeOutput -notmatch "Fast-forward") {
@@ -21,7 +21,7 @@ if ($mergeOutput -notmatch "Already up to date" -and $mergeOutput -notmatch "Fas
     & $PSCommandPath
     exit
 } else {
-    Write-Host "No new Git changes found. Continuing..."
+    Write-Host "No new Git changes found. Continuing...`n`n"
 }
 
 # --- Create link (junction) between default save location (C:\Users\Bryan\AppData\LocalLow\IronGate) and the Save folder in this directory ---
