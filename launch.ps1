@@ -7,7 +7,7 @@ git fetch | Out-Null
 $pullOutput = git pull 2>&1
 
 Write-Host $pullOutput
-Write-Host "`nGit update done."
+Write-Host "Git update done."
 
 # Check if merge actually changed anything
 if ($pullOutput -notmatch "Already up to date.") {
