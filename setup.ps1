@@ -145,8 +145,13 @@ Get-ChildItem -Path $ValheimDir -Recurse -Force |
 
         # Copy if not already existing
         if (-Not (Test-Path $destination)) {
+            $parentDir = Split-Path -Path $destination -Parent
+            if (-not (Test-Path $parentDir)) {
+                New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+            }
+
             Write-Output "Copying $($_.FullName) into $destination"
-            Copy-Item -Path $_.FullName -Destination $destination
+            Copy-Item -Path "$($_.FullName)" -Destination "$destination"
         } else {
             Write-Output "Skipping existing item: $relativePath"
         }
