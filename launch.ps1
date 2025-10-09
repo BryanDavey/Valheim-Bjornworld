@@ -31,21 +31,6 @@ Write-Host "SaveFolder:                    $SaveFolder"
 
 Write-Host "`nThis script will create a junction (shortcut) between where Valheim is looking for save data and where the save data is in this custom Valheim installation.`n"
 Write-Host "This operation will not copy any data, just create a shortcut such that:`n    $ValheimSave`nwill redirect to:`n    $SaveFolder"
-. ".\Read_YesNoChoice.ps1" # Load external script with Read-YesNoChoice function
-$choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
-
-# Act based on the choice
-switch ($choice) {
-    0 { 
-        Write-Host "You answered No. Exiting..."
-        exit 1
-    }
-    1 { 
-        Write-Host "You answered Yes. Continuing..."
-        # Continue script...
-    }
-}
-
 
 # --- Remove existing save link or folder ---
 if (Test-Path $ValheimSave) {
