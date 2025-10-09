@@ -6,8 +6,10 @@ $ValheimSave = Join-Path $env:userprofile 'appdata\locallow\IronGate\Valheim'
 Write-Host "Valheim default save location: $ValheimSave"
 Write-Host "SaveFolder: $SaveFolder"
 
+Write-Host "This script will create a junction (shortcut) between where Valheim is looking for save data and where the save data is in this custom Valheim installation."
+Write-Host "This operation will not copy any data, just create a shortcut such that:`n  $ValheimSave`nwill redirect to:`n   $SaveFolder"
 . ".\Read_YesNoChoice.ps1" # Load external script with Read-YesNoChoice function
-$choice = Read-YesNoChoice -Title "Is this information correct?" -Message "Yes or No?" -DefaultOption 1
+$choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
 
 # Act based on the choice
 switch ($choice) {
