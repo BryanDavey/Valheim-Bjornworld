@@ -11,3 +11,4 @@ Valheim.exe
 # Ignore runtime BepInEx files
 BepInEx/cache/
 BepInEx/LogOutput.Log
+BepInEx/config/
