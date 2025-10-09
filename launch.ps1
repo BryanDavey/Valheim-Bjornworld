@@ -37,6 +37,11 @@ if (-not (Test-Path $ValheimSave)) {
     exit 1
 }
 
+# --- Add git template remote and pull latest changes ---
+git remote add template git@github.com:BryanDavey/Valheim-Modded.git
+git fetch --all
+git merge upstream/main
+
 # --- Launch Valheim ---
 $ExePath = Join-Path (Get-Item .).FullName 'valheim.exe'
 if (-not (Test-Path $ExePath)) {
