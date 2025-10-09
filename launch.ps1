@@ -1,9 +1,28 @@
 # --- Add git template remote and pull latest changes ---
 Write-Host "Checking for any changes on remote Git repository and template..."
-git remote add template git@github.com:BryanDavey/Valheim-Modded.git
-git fetch --all
+# Ensure template remote exists
+if (-not (git remote | Select-String -Quiet "^template$")) {
+    git remote add template git@github.com:BryanDavey/Valheim-Modded.git
+}
+# Fetch latest from all remotes
+git fetch --all | Out-Null
 git merge template/main --allow-unrelated-histories -m "Merge updates from template repo"
-Write-Host "Git update done.`n`n"
+
+# Perform merge and capture output
+$mergeOutput = git merge template/main --allow-unrelated-histories -m "Merge updates from template repo" 2>&1
+
+Write-Host $mergeOutput
+Write-Host "`nGit update done.`n`n"
+
+# Check if merge actually changed anything
+if ($mergeOutput -notmatch "Already up to date" -and $mergeOutput -notmatch "Fast-forward") {
+    Write-Host "Changes were merged. Re-running this script..."
+    # Restart this script
+    & $PSCommandPath
+    exit
+} else {
+    Write-Host "No new Git changes found. Continuing..."
+}
 
 # --- Create link (junction) between default save location (C:\Users\Bryan\AppData\LocalLow\IronGate) and the Save folder in this directory ---
 
