@@ -1,6 +1,6 @@
 # --- Configuration & Setup ---
 $ErrorActionPreference = 'Stop'
-Write-Host "=== ModdedValheim Launcher ===`n"
+Write-Host "=== ModdedValheim Setup Script ===`n"
 
 # Path where this script is located (Valheim-Modded folder)
 $ModdedValheimDir = (Get-Item .).FullName
@@ -81,7 +81,6 @@ if (-not $SteamPath) {
     Write-Error "Could not find Steam installation path."
     exit 1
 }
-Write-Host "Found Steam path: $steamPath"
 
 $ValheimDir = (Get-Content "$SteamPath\steamapps\libraryfolders.vdf" |
     Where-Object { $_ -match '"path"' } | ForEach-Object { ($_ -replace '.*"path"\s*"\s*(.+?)\s*".*','$1') }) |
@@ -93,7 +92,7 @@ $ValheimDir = (Get-Content "$SteamPath\steamapps\libraryfolders.vdf" |
         }
     } | Where-Object { $_ -ne $null } | Select-Object -First 1
 
-Write-Host "Valheim game files will be copied from:`n   $ValheimDir to`n    $ModdedValheimDir"
+Write-Host "Valheim game files will be copied from:`n    $ValheimDir`nto`n    $ModdedValheimDir"
 
 $choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
 
@@ -181,7 +180,7 @@ $ExistingConfigPath = Join-Path $ValheimDir 'BepInEx\config'
 $NewConfigPath = Join-Path $ModdedValheimDir 'BepInEx\config'
 
 Write-Host "In the next operation, the script will find and copy any existing BepInEx config files from your Valheim installation."
-Write-Host "BepInEx config files will be copied from:`n   $ExistingConfigPath to`n    $NewConfigPath"
+Write-Host "BepInEx config files will be copied from:`n    $ExistingConfigPath`nto`n    $NewConfigPath"
 $choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
 
 # Act based on the choice
