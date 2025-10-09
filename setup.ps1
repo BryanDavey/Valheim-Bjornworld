@@ -92,7 +92,7 @@ $ValheimDir = (Get-Content "$SteamPath\steamapps\libraryfolders.vdf" |
         }
     } | Where-Object { $_ -ne $null } | Select-Object -First 1
 
-Write-Host "Valheim game files will be copied from:`n    $ValheimDir to`n    $ModdedValheimDir"
+Write-Host "Valheim game files will be copied from:`n    $ValheimDir`nto`n    $ModdedValheimDir"
 
 $choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
 
