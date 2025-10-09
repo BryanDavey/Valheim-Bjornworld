@@ -1,21 +1,16 @@
 # --- Add git template remote and pull latest changes ---
-Write-Host "Checking for any changes on remote Git repository and template..."
-# Ensure template remote exists
-if (-not (git remote | Select-String -Quiet "^template$")) {
-    git remote add template git@github.com:BryanDavey/Valheim-Modded.git
-}
+Write-Host "Checking for any changes on remote Git repository..."
 # Fetch latest from all remotes
-git fetch --all | Out-Null
-git merge template/main --allow-unrelated-histories -m "Merge updates from template repo"
+git fetch | Out-Null
 
 # Perform merge and capture output
-$mergeOutput = git merge template/main --allow-unrelated-histories -m "Merge updates from template repo" 2>&1
+$pullOutput = git pull 2>&1
 
-Write-Host $mergeOutput
+Write-Host $pullOutput
 Write-Host "`nGit update done."
 
 # Check if merge actually changed anything
-if ($mergeOutput -notmatch "Already up to date" -and $mergeOutput -notmatch "Fast-forward") {
+if ($pullOutput -notmatch "Already up to date.") {
     Write-Host "Changes were merged. Re-running this script..."
     # Restart this script
     & $PSCommandPath
