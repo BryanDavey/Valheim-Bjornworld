@@ -10,8 +10,8 @@ $ModdedValheimDir = (Get-Item .).FullName
 $ValheimSave = Join-Path $env:userprofile 'appdata\locallow\IronGate\Valheim'
 
 $SaveFolder = Join-Path $ModdedValheimDir 'Saves'
-Write-Host "This operation will copy any existing world and character saves into this Valhiem installation."
-Write-Host "Please navigate to $ValheimSave in your file explorer and ensure you want to copy those saves into this Valheim installation."
+Write-Host "This operation will copy any existing world and character saves into this Valheim installation."
+Write-Host "Please navigate to `%userprofile%\appdata\locallow\IronGate` in your file explorer and ensure you want to copy those saves into this Valheim installation."
 Write-Host "After this operation, the contents of:`n  $ValheimSave `nwill be copied to:`n  $SaveFolder"
 
 
@@ -32,40 +32,44 @@ switch ($choice) {
 
 # --- Copy world and character saves to this modded valheim installation ---
 
-# Ensure the source and destination exist
-if (-Not (Test-Path $ValheimSave)) {
-    Write-Error "Source folder $ValheimSave does not exist."
-    Write-Output "Please run Valheim from steam first (then exit) to generate the saves folder."
-    return
-}
+# # Ensure the source and destination exist
+# if (-Not (Test-Path $ValheimSave)) {
+#     Write-Error "Source folder $ValheimSave does not exist."
+#     Write-Output "Please run Valheim from steam first (then exit) to generate the saves folder."
+#     return
+# }
+# Check if the destination folder exists
 if (-Not (Test-Path $SaveFolder)) {
     Write-Output "Destination folder $SaveFolder does not exist. Creating it..."
     New-Item -ItemType Directory -Path $SaveFolder | Out-Null
 }
 
-# Move all saves into the modded valheim folder
-Get-ChildItem -Path $ValheimSave -Force | ForEach-Object {
-    $destination = Join-Path -Path $SaveFolder -ChildPath $_.Name
+# # Move all saves into the modded valheim folder
+# Get-ChildItem -Path $ValheimSave -Force | ForEach-Object {
+#     $destination = Join-Path -Path $SaveFolder -ChildPath $_.Name
     
-    # Move item if it doesn't already exist
-    if (-Not (Test-Path $destination)) {
-        Move-Item -Path $_.FullName -Destination $SaveFolder
-    } else {
-        Write-Output "Skipping existing item: $($_.Name)"
-    }
-}
+#     # Move item if it doesn't already exist
+#     if (-Not (Test-Path $destination)) {
+#         Move-Item -Path $_.FullName -Destination $SaveFolder
+#     } else {
+#         Write-Output "Skipping existing item: $($_.Name)"
+#     }
+# }
 
-# Move everything recursively, preserving existing items
-Get-ChildItem -Path $ValheimSave -Recurse -Force | ForEach-Object {
-    # Compute relative path to preserve folder structure
-    $relativePath = $_.FullName.Substring($ValheimSave.Length).TrimStart('\')
-    $destination = Join-Path -Path $SaveFolder -ChildPath $relativePath
+# Ensure the source folder exists
+if ((Test-Path $ValheimSave)) {
+    # Move everything recursively, preserving existing items
+    Get-ChildItem -Path $ValheimSave -Recurse -Force | ForEach-Object {
+        # Compute relative path to preserve folder structure
+        $relativePath = $_.FullName.Substring($ValheimSave.Length).TrimStart('\')
+        $destination = Join-Path -Path $SaveFolder -ChildPath $relativePath
 
-    # Move file or folder if it doesn't exist
-    if (-Not (Test-Path $destination)) {
-        Move-Item -Path $_.FullName -Destination $destination
-    } else {
-        Write-Output "Skipping existing item: $relativePath"
+        # Move file or folder if it doesn't exist
+        if (-Not (Test-Path $destination)) {
+            Move-Item -Path $_.FullName -Destination $destination
+        } else {
+            Write-Output "Skipping existing item: $relativePath"
+        }
     }
 }
 
