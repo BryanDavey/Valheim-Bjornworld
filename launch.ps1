@@ -18,6 +18,8 @@ if ($pullOutput -notmatch "Already up to date.") {
 } else {
     Write-Host "No new Git changes found. Continuing...`n`n"
 }
+# Reset the terminal output so only relevant info is shown when prompting the user for Yes/No
+Clear-Host
 
 # --- Create link (junction) between default save location (C:\Users\Bryan\AppData\LocalLow\IronGate) and the Save folder in this directory ---
 
