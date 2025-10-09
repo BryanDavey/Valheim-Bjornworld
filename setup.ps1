@@ -9,9 +9,6 @@ $ModdedValheimDir = (Get-Item .).FullName
 # Path to where Valheim.exe will look for world and character save data
 $ValheimSave = Join-Path $env:userprofile 'appdata\locallow\IronGate\Valheim'
 
-Write-Host "ModdedValheim folder:   $ModdedValheimDir"
-Write-Host "Valheim saves folder:   $ValheimSave"
-
 $SaveFolder = Join-Path $ModdedValheimDir 'Saves'
 Write-Host "This operation will copy any existing world and character saves into this Valhiem installation."
 Write-Host "Please navigate to $ValheimSave in your file explorer and ensure you want to copy those saves into this Valheim installation."
@@ -156,21 +153,6 @@ Get-ChildItem -Path $ValheimDir -Recurse -Force |
             Write-Output "Skipping existing item: $relativePath"
         }
     }
-
-# # Move everything recursively, preserving existing items
-# Get-ChildItem -Path $ValheimDir -Recurse -Force | ForEach-Object {
-#     # Compute relative path to preserve folder structure
-#     $relativePath = $_.FullName.Substring($ValheimDir.Length - 1).TrimStart('\')
-#     $destination = Join-Path -Path $ModdedValheimDir -ChildPath $relativePath
-
-#     # Move file or folder if it doesn't exist
-#     if (-Not (Test-Path $destination)) {
-#         Write-Output "Copying $($_.FullName) into $destination"
-#         Copy-Item -Path $_.FullName -Destination $destination
-#     } else {
-#         Write-Output "Skipping existing item: $relativePath"
-#     }
-# }
 
 Write-Host "Copy completed from $ValheimDir to $ModdedValheimDir"
 
