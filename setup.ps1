@@ -81,7 +81,6 @@ if (-not $SteamPath) {
     Write-Error "Could not find Steam installation path."
     exit 1
 }
-Write-Host "Found Steam path: $steamPath"
 
 $ValheimDir = (Get-Content "$SteamPath\steamapps\libraryfolders.vdf" |
     Where-Object { $_ -match '"path"' } | ForEach-Object { ($_ -replace '.*"path"\s*"\s*(.+?)\s*".*','$1') }) |
