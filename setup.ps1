@@ -93,7 +93,7 @@ $ValheimDir = (Get-Content "$SteamPath\steamapps\libraryfolders.vdf" |
         }
     } | Where-Object { $_ -ne $null } | Select-Object -First 1
 
-Write-Host "Valheim game files will be copied from:`n   $ValheimDir to`n    $ModdedValheimDir"
+Write-Host "Valheim game files will be copied from:`n    $ValheimDir to`n    $ModdedValheimDir"
 
 $choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
 
@@ -181,7 +181,7 @@ $ExistingConfigPath = Join-Path $ValheimDir 'BepInEx\config'
 $NewConfigPath = Join-Path $ModdedValheimDir 'BepInEx\config'
 
 Write-Host "In the next operation, the script will find and copy any existing BepInEx config files from your Valheim installation."
-Write-Host "BepInEx config files will be copied from:`n   $ExistingConfigPath to`n    $NewConfigPath"
+Write-Host "BepInEx config files will be copied from:`n    $ExistingConfigPath to`n    $NewConfigPath"
 $choice = Read-YesNoChoice -Title "Would you like to continue?" -Message "Yes or No?" -DefaultOption 1
 
 # Act based on the choice
