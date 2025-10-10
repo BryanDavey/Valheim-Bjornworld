@@ -13,3 +13,4 @@ BepInEx/cache/
 BepInEx/LogOutput.Log
 BepInEx/config/
 BepInEx/plugins/
+!BepInEx/config/Azumatt.FastLink_servers.yml
