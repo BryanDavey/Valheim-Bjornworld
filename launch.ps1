@@ -27,82 +27,80 @@ $NextCloudURLFilePath = Join-Path $PSScriptRoot "NextCloudURLs.ps1"
 if (Test-Path $NextCloudURLFilePath) {
     . $NextCloudURLFilePath
     Write-Host "✅ Loaded variables from $NextCloudURLFilePath"
+    try {
+        $remoteVersion = Invoke-WebRequest -Uri $remoteVersionUrl -UseBasicParsing
+    } catch {
+        Write-Host "⚠️ Could not check version. Downloading anyway."
+        $remoteVersion.content = "-1"
+    }
+
+    # Read and parse versions
+    $localVersionUrl = Join-Path $PSScriptRoot "BepInEx\plugins\version.md"
+    if (Test-Path $localVersionUrl) {
+        $localVersion = [int](Get-Content $localVersionUrl | Select-Object -First 1)
+    } else {
+        $localVersion = "-1"
+    }
+
+    $remoteVersion = $remoteVersion.content
+    # Compare
+    if ([int]$remoteVersion -gt [int]$localVersion) {
+        Write-Host "Some mods have been updated in the Nextcloud folder."
+        . ".\Read_YesNoChoice.ps1" # Load external script with Read-YesNoChoice function
+        $choice = Read-YesNoChoice -Title "Would you like to download them?" -Message "Yes or No?" -DefaultOption 1
+
+        # Act based on the choice
+        switch ($choice) {
+            0 { 
+                Write-Host "You answered No. Continuing..."
+            }
+            1 {
+                Write-Host "You answered Yes. Downloading mods from Nextcloud..."
+                Write-Host "🆕 New mod version detected ($remoteVersion). Downloading..."
+                $pluginsDir = Join-Path $PSScriptRoot "BepInEx\plugins"
+                $tempZip = Join-Path $PSScriptRoot "mods.zip"
+
+                # Download ZIP
+                Invoke-WebRequest -Uri $modsUrl -OutFile $tempZip
+
+                # Create temporary extraction folder
+                $tempExtract = Join-Path ([System.IO.Path]::GetTempPath()) "mods_extract"
+                if (Test-Path $tempExtract) { Remove-Item $tempExtract -Recurse -Force }
+                New-Item -ItemType Directory -Path $tempExtract | Out-Null
+
+                # Extract to temp folder
+                Expand-Archive -Path $tempZip -DestinationPath $tempExtract -Force
+
+                # Detect if a single top-level folder exists
+                $entries = Get-ChildItem -Path $tempExtract -Force
+                if ($entries.Count -eq 1 -and $entries[0].PSIsContainer) {
+                    # Use that subfolder as the real root
+                    $realExtractPath = $entries[0].FullName
+                } else {
+                    # Otherwise use the temp folder directly
+                    $realExtractPath = $tempExtract
+                }
+
+                # Move the actual contents into the plugins directory
+                Get-ChildItem -Path $realExtractPath -Force | ForEach-Object {
+                    Move-Item -Path $_.FullName -Destination $pluginsDir -Force
+                }
+
+                # Clean up temp files
+                Remove-Item $tempExtract -Recurse -Force
+                Remove-Item $tempZip -Force
+
+                Write-Host "✅ Mods updated successfully!"
+            }
+        }
+    } else {
+        Write-Host "Mods do not need to be updated. Continuing..."
+    }
+    # Reset the terminal output so only relevant info is shown when prompting the user for Yes/No
+    Clear-Host
 } else {
     Write-Warning "⚠️ Variables file not found at: $NextCloudURLFilePath"
-    exit 1
 }
-
-try {
-    $remoteVersion = Invoke-WebRequest -Uri $remoteVersionUrl -UseBasicParsing
-} catch {
-    Write-Host "⚠️ Could not check version. Downloading anyway."
-    $remoteVersion.content = "-1"
-}
-
-# Read and parse versions
-$localVersionUrl = Join-Path $PSScriptRoot "BepInEx\plugins\version.md"
-if (Test-Path $localVersionUrl) {
-    $localVersion = [int](Get-Content $localVersionUrl | Select-Object -First 1)
-} else {
-    $localVersion = "-1"
-}
-
-$remoteVersion = $remoteVersion.content
-# Compare
-if ([int]$remoteVersion -gt [int]$localVersion) {
-    Write-Host "Some mods have been updated in the Nextcloud folder."
-    . ".\Read_YesNoChoice.ps1" # Load external script with Read-YesNoChoice function
-    $choice = Read-YesNoChoice -Title "Would you like to download them?" -Message "Yes or No?" -DefaultOption 1
-
-    # Act based on the choice
-    switch ($choice) {
-        0 { 
-            Write-Host "You answered No. Continuing..."
-        }
-        1 {
-            Write-Host "You answered Yes. Downloading mods from Nextcloud..."
-            Write-Host "🆕 New mod version detected ($remoteVersion). Downloading..."
-            $pluginsDir = Join-Path $PSScriptRoot "BepInEx\plugins"
-            $tempZip = Join-Path $PSScriptRoot "mods.zip"
-
-            # Download ZIP
-            Invoke-WebRequest -Uri $modsUrl -OutFile $tempZip
-
-            # Create temporary extraction folder
-            $tempExtract = Join-Path ([System.IO.Path]::GetTempPath()) "mods_extract"
-            if (Test-Path $tempExtract) { Remove-Item $tempExtract -Recurse -Force }
-            New-Item -ItemType Directory -Path $tempExtract | Out-Null
-
-            # Extract to temp folder
-            Expand-Archive -Path $tempZip -DestinationPath $tempExtract -Force
-
-            # Detect if a single top-level folder exists
-            $entries = Get-ChildItem -Path $tempExtract -Force
-            if ($entries.Count -eq 1 -and $entries[0].PSIsContainer) {
-                # Use that subfolder as the real root
-                $realExtractPath = $entries[0].FullName
-            } else {
-                # Otherwise use the temp folder directly
-                $realExtractPath = $tempExtract
-            }
-
-            # Move the actual contents into the plugins directory
-            Get-ChildItem -Path $realExtractPath -Force | ForEach-Object {
-                Move-Item -Path $_.FullName -Destination $pluginsDir -Force
-            }
-
-            # Clean up temp files
-            Remove-Item $tempExtract -Recurse -Force
-            Remove-Item $tempZip -Force
-
-            Write-Host "✅ Mods updated successfully!"
-        }
-    }
-} else {
-    Write-Host "Mods do not need to be updated. Continuing..."
-}
-# Reset the terminal output so only relevant info is shown when prompting the user for Yes/No
-Clear-Host
 
 # --- Create link (junction) between default save location (C:\Users\Bryan\AppData\LocalLow\IronGate) and the Save folder in this directory ---
 
