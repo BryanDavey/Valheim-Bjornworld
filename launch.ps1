@@ -61,7 +61,8 @@ if (Test-Path $NextCloudURLFilePath) {
                 $tempZip = Join-Path $PSScriptRoot "mods.zip"
 
                 # Download ZIP
-                Invoke-WebRequest -Uri $modsUrl -OutFile $tempZip
+                # Invoke-WebRequest -Uri $modsUrl -OutFile $tempZip # Slow
+                curl.exe -L "$modsUrl" -o "$tempZip" # Much faster
 
                 # Create temporary extraction folder
                 $tempExtract = Join-Path ([System.IO.Path]::GetTempPath()) "mods_extract"

@@ -36,7 +36,8 @@ if ([int]$remoteVersion -gt [int]$localVersion) {
     Write-Host "🆕 New mod version detected ($remoteVersion). Downloading..."
 
     # Download ZIP
-    Invoke-WebRequest -Uri $modsUrl -OutFile $tempZip
+    # Invoke-WebRequest -Uri $modsUrl -OutFile $tempZip # Slow
+    curl.exe -L "$modsUrl" -o "$tempZip" # Much faster
 
     # Create temporary extraction folder
     $tempExtract = Join-Path ([System.IO.Path]::GetTempPath()) "mods_extract"
