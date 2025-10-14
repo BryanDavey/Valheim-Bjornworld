@@ -1,3 +1,23 @@
+# --- Ensure Steam is running ---
+# Ensure Steam is running
+$steamProcess = Get-Process -Name "steam" -ErrorAction SilentlyContinue
+
+if (-not $steamProcess) {
+    Write-Host "Steam is not running. Starting Steam..."
+    $steamPath = "${env:appdata}\Microsoft\Windows\Start Menu\Programs\Steam.lnk"
+
+    if (-not (Test-Path $steamPath)) {
+        Write-Host "Steam not found at default path. Please specify your Steam path manually."
+        exit 1
+    }
+
+    Start-Process $steamPath
+    # Optional: wait for it to start before continuing
+    Start-Sleep -Seconds 10
+} else {
+    Write-Host "Steam is already running."
+}
+
 # --- Add git template remote and pull latest changes ---
 Write-Host "Checking for any changes on remote Git repository..."
 # Fetch latest from all remotes
