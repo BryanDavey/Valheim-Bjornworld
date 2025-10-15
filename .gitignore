@@ -13,4 +13,12 @@ BepInEx/cache/
 BepInEx/LogOutput.Log
 BepInEx/config/
 BepInEx/plugins/
-!BepInEx/config/Azumatt.FastLink_servers.yml
+BepInEx/DumpedAssemblies/
+
+# Ignore downloaded BepInEx source files
+doorstop_libs/
+doorstop_config.ini
+start_game_bepinex.sh
+start_server_bepinex.sh
+changelog.txt
+winhttp.dll
