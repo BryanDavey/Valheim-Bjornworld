@@ -22,3 +22,6 @@ start_game_bepinex.sh
 start_server_bepinex.sh
 changelog.txt
 winhttp.dll
+
+# Don't ignore mod configs I want to track
+!BepInEx/config/Azumatt.FastLink_servers.yml
