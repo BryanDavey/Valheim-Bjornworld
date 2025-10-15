@@ -2,9 +2,9 @@
 $NextCloudURLFilePath = Join-Path $PSScriptRoot "NextCloudURLs.ps1"
 if (Test-Path $NextCloudURLFilePath) {
     . $NextCloudURLFilePath
-    Write-Host "✅ Loaded variables from $NextCloudURLFilePath"
+    Write-Host "Loaded variables from $NextCloudURLFilePath"
 } else {
-    Write-Warning "⚠️ Variables file not found at: $NextCloudURLFilePath"
+    Write-Warning "Variables file not found at: $NextCloudURLFilePath"
     exit 1
 }
 
@@ -15,7 +15,7 @@ $localVersionUrl = Join-Path $PSScriptRoot "BepInEx\plugins\version.md"
 try {
     $remoteVersion = Invoke-WebRequest -Uri $remoteVersionUrl -UseBasicParsing
 } catch {
-    Write-Host "⚠️ Could not check version. Downloading anyway."
+    Write-Host "Could not check version. Downloading anyway."
     $remoteVersion.content = "-1"
 }
 Write-Host "localversionurl: $localVersionUrl"
@@ -33,7 +33,7 @@ Write-Host "Remote version: $remoteVersion"
 
 # Compare
 if ([int]$remoteVersion -gt [int]$localVersion) {
-    Write-Host "🆕 New mod version detected ($remoteVersion). Downloading..."
+    Write-Host "New mod version detected ($remoteVersion). Downloading..."
 
     # Download ZIP
     # Invoke-WebRequest -Uri $modsUrl -OutFile $tempZip # Slow
@@ -66,20 +66,9 @@ if ([int]$remoteVersion -gt [int]$localVersion) {
     Remove-Item $tempExtract -Recurse -Force
     Remove-Item $tempZip -Force
 
-    Write-Host "✅ Mods updated successfully!"
+    Write-Host "Mods updated successfully!"
 } elseif ([int]$remoteVersion -lt [int]$localVersion) {
-    Write-Host "⬇️ Local version is newer? ($localVersion > $remoteVersion)"
+    Write-Host "⬇Local version is newer? ($localVersion > $remoteVersion)"
 } else {
-    Write-Host "✅ Versions match ($localVersion). No Update required."
+    Write-Host "Versions match ($localVersion). No Update required."
 }
-
-# if ($remoteVersion -ne $localVersion) {
-#     Write-Host "🆕 New mod version detected ($remoteVersion). Downloading..."
-#     Invoke-WebRequest -Uri $modsUrl -OutFile $tempZip
-#     Expand-Archive -Path $tempZip -DestinationPath $pluginsDir -Force
-#     Remove-Item $tempZip
-#     $remoteVersion | Out-File $versionFile -Force
-#     Write-Host "✅ Mods updated successfully!"
-# } else {
-#     Write-Host "✅ Mods are already up to date."
-# }
