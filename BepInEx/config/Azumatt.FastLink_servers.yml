@@ -2,12 +2,13 @@
 # Servers are automatically sorted alphabetically when shown in the list.
 # This file live updates the in-game listing. Feel free to change it while in the main menu.
 
-Bjornworld-Local:
-  address: 10.0.0.16
+Bjornworld:
+  address: valheim.brydavey.com
   port: 2456
   password: Ryzen5Valheim
 
-Resources-Local:
-  address: 10.0.0.16
+Resources:
+  address: valheim.brydavey.com
   port: 2466
-  password: Ryzen5Valheim
+  password: Ryzen5Valheim
+
