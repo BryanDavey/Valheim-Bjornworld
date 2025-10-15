@@ -46,11 +46,11 @@ Clear-Host
 $NextCloudURLFilePath = Join-Path $PSScriptRoot "NextCloudURLs.ps1"
 if (Test-Path $NextCloudURLFilePath) {
     . $NextCloudURLFilePath
-    Write-Host "✅ Loaded variables from $NextCloudURLFilePath"
+    Write-Host "Loaded variables from $NextCloudURLFilePath"
     try {
         $remoteVersion = Invoke-WebRequest -Uri $remoteVersionUrl -UseBasicParsing
     } catch {
-        Write-Host "⚠️ Could not check version. Downloading anyway."
+        Write-Host "Could not check version. Downloading anyway."
         $remoteVersion.content = "-1"
     }
 
@@ -76,7 +76,7 @@ if (Test-Path $NextCloudURLFilePath) {
             }
             1 {
                 Write-Host "You answered Yes. Downloading mods from Nextcloud..."
-                Write-Host "🆕 New mod version detected ($remoteVersion). Downloading..."
+                Write-Host "New mod version detected ($remoteVersion). Downloading..."
                 $pluginsDir = Join-Path $PSScriptRoot "BepInEx\plugins"
                 $tempZip = Join-Path $PSScriptRoot "mods.zip"
 
@@ -111,7 +111,7 @@ if (Test-Path $NextCloudURLFilePath) {
                 Remove-Item $tempExtract -Recurse -Force
                 Remove-Item $tempZip -Force
 
-                Write-Host "✅ Mods updated successfully!"
+                Write-Host "Mods updated successfully!"
             }
         }
     } else {
