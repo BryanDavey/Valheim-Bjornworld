@@ -18,7 +18,7 @@ if (-not (Test-Path $LaunchBat)) {
 }
 
 if (-not (Test-Path $IconPath)) {
-    Write-Host "⚠️ Icon file not found at $IconPath. The shortcut will use the default PowerShell icon."
+    Write-Host "Icon file not found at $IconPath. The shortcut will use the default PowerShell icon."
     $IconPath = $null
 }
 
@@ -30,4 +30,4 @@ $Shortcut.WorkingDirectory = Split-Path $LaunchBat
 if ($IconPath) { $Shortcut.IconLocation = $IconPath }
 $Shortcut.Save()
 
-Write-Host "✅ Shortcut created at: $ShortcutPath"
+Write-Host "Shortcut created at: $ShortcutPath"
