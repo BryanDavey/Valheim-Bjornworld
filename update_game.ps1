@@ -1,5 +1,8 @@
 # --- Copy Game files to this modded valheim installation ---
 
+# Path where this script is located (Valheim-Modded folder)
+$ModdedValheimDir = (Get-Item .).FullName
+
 # Get Steam install path from registry
 $SteamPath = (Get-ItemProperty "HKCU:\Software\Valve\Steam").SteamPath
 
